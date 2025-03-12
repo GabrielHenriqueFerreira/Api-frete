@@ -161,7 +161,6 @@
         }
 
         // Declara a variável frete no escopo global
-
 async function calcularFrete() {
     const cep = document.getElementById('cep').value;
 
@@ -179,7 +178,7 @@ async function calcularFrete() {
     const cepOrigem = "14408014";
 
     try {
-        const response = await fetch('http://localhost:3220/calcular-frete', {
+        const response = await fetch('https://api-frete-xz1n.onrender.com/calcular-frete', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -218,13 +217,6 @@ async function calcularFrete() {
 
     document.getElementById('frete').textContent = `$${frete.toFixed(2)}`;
     atualizarTotal();
-}
-
-function atualizarTotal() {
-    const subtotal = parseFloat(subtotalElement.textContent.replace('$', '')) || 0;
-    const freteValue = parseFloat(document.getElementById('frete').textContent.replace('$', '')) || 0;
-    const total = subtotal + freteValue;
-    totalElement.textContent = `$${total.toFixed(2)}`;
 }
 
         exibirCarrinho();
