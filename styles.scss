@@ -267,22 +267,22 @@ aside > button:hover {
 }
 
 .frete-input {
-    display: flex;
-    flex-direction: column;
-    gap: 5px; /* Espaço entre os elementos */
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Espaço entre os elementos */
 }
 
 .error-message {
-    display: none; /* Inicialmente oculto */
-    color: red;
-    font-size: 14px;
-    margin-top: 5px; /* Espaço entre o input e a mensagem */
+  display: none; /* Inicialmente oculto */
+  color: red;
+  font-size: 14px;
+  margin-top: 5px; /* Espaço entre o input e a mensagem */
 }
 
 .loading-spinner {
-    display: none; /* Inicialmente oculto */
-    font-size: 14px;
-    margin-top: 5px; /* Espaço entre o input e o spinner */
+  display: none; /* Inicialmente oculto */
+  font-size: 14px;
+  margin-top: 5px; /* Espaço entre o input e o spinner */
 }
 
 /* Estilo do ícone de hambúrguer */
@@ -571,4 +571,5 @@ aside > button:hover {
   font-size: 10px; /* Tamanho da fonte da mensagem de erro reduzido */
   margin-top: 3px; /* Espaçamento acima da mensagem de erro */
 }
+
 
