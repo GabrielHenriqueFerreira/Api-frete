@@ -257,29 +257,43 @@ aside > button:hover {
   color: #ddd;
 }
 
-.frete-input input {
-  padding: 8px;
-  width: 100%;
-  max-width: 150px;
-}
-
+/* Estilos para o contêiner do CEP */
 .frete-input {
   display: flex;
-  flex-direction: column;
-  gap: 5px; /* Espaço entre os elementos */
+  align-items: center; /* Alinha o texto "CEP" e o input na mesma linha */
+  gap: 10px; /* Espaço entre o texto "CEP" e o input */
+  margin-top: 10px; /* Espaço acima do contêiner do CEP */
 }
 
-.error-message {
+/* Estilo para o texto "CEP" */
+.frete-input span {
+  font-size: 14px; /* Tamanho da fonte do texto "CEP" */
+  white-space: nowrap; /* Impede que o texto "CEP" quebre em várias linhas */
+}
+
+/* Estilo para a caixa de texto do CEP */
+.frete-input input {
+  flex: 1; /* Ocupa o espaço restante */
+  max-width: 150px; /* Largura máxima da caixa de texto */
+  padding: 8px; /* Padding interno */
+  border: 1px solid #ccc; /* Borda da caixa de texto */
+  border-radius: 4px; /* Bordas arredondadas */
+  font-size: 14px; /* Tamanho da fonte */
+}
+
+/* Estilo para a mensagem de erro */
+#cep-error {
   display: none; /* Inicialmente oculto */
   color: red;
-  font-size: 14px;
-  margin-top: 5px; /* Espaço entre o input e a mensagem */
+  font-size: 12px; /* Tamanho da fonte reduzido */
+  margin-top: 5px; /* Espaço acima da mensagem de erro */
 }
 
-.loading-spinner {
+/* Estilo para o spinner de carregamento */
+#loading-spinner {
   display: none; /* Inicialmente oculto */
   font-size: 14px;
-  margin-top: 5px; /* Espaço entre o input e o spinner */
+  margin-top: 5px; /* Espaço acima do spinner */
 }
 
 /* Estilo do ícone de hambúrguer */
