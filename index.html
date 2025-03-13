@@ -205,40 +205,43 @@ async function calcularFrete() {
     const largura = 12;
     const comprimento = 17;
 
-    try {
-        const response = await fetch('https://api-frete-xz1n.onrender.com/calcular-frete', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                cepDestino: cep,
-                cepOrigem: cepOrigem,
-                peso: peso,
-                altura: altura,
-                largura: largura,
-                comprimento: comprimento,
-            }),
-        });
+try {
+    const response = await fetch('https://api-frete-xz1n.onrender.com/calcular-frete', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            cepDestino: cep,
+            cepOrigem: cepOrigem,
+            peso: peso,
+            altura: altura,
+            largura: largura,
+            comprimento: comprimento,
+        }),
+    });
 
-        if (!response.ok) {
-            throw new Error('Erro ao calcular frete');
-        }
+    if (!response.ok) {
+        throw new Error('Erro ao calcular frete');
+    }
 
-        const data = await response.json();
+    const data = await response.json();
 
-        if (data && data.length > 0 && !isNaN(parseFloat(data[0].price))) {
-            const precoFormatado = data[0].price.replace('R$', '').replace(',', '.').trim();
-            frete = parseFloat(precoFormatado);
-        } else {
-            frete = 0;
-            alert('Não foi possível calcular o frete. Tente novamente mais tarde.');
-        }
-    } catch (error) {
-        console.error('Erro ao calcular frete:', error);
+    if (data && data.error && data.error.includes("mesma cidade")) {
+        frete = 0; // Ou um valor fixo para entregas locais
+        alert('Entregas na mesma cidade têm frete grátis!');
+    } else if (data && data.length > 0 && !isNaN(parseFloat(data[0].price))) {
+        const precoFormatado = data[0].price.replace('R$', '').replace(',', '.').trim();
+        frete = parseFloat(precoFormatado);
+    } else {
         frete = 0;
-        alert('Erro ao calcular o frete. Tente novamente mais tarde.');
-    } finally {
+        alert('Não foi possível calcular o frete. Tente novamente mais tarde.');
+    }
+} catch (error) {
+    console.error('Erro ao calcular frete:', error);
+    frete = 0;
+    alert('Erro ao calcular o frete. Tente novamente mais tarde.');
+} finally {
         loadingSpinner.style.display = 'none'; // Esconde o spinner de carregamento
     }
 
