@@ -164,66 +164,87 @@
             exibirCarrinho();
         }
 
-        async function calcularFrete() {
-            const cep = document.getElementById('cep').value;
+       async function verificarCidade(cep) {
+    try {
+        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
+        const data = await response.json();
+        return data.localidade; // Retorna a cidade do CEP
+    } catch (error) {
+        console.error('Erro ao consultar CEP:', error);
+        return null;
+    }
+}
 
-            if (!cep || cep.length !== 8 || isNaN(cep)) {
-                cepError.style.display = 'block';
-                frete = 0;
-                atualizarTotal();
-                return;
-            } else {
-                cepError.style.display = 'none';
-            }
+async function calcularFrete() {
+    const cep = document.getElementById('cep').value;
+    const cepOrigem = "14408014"; // CEP da empresa
 
-            loadingSpinner.style.display = 'block'; // Mostra o spinner de carregamento
+    if (!cep || cep.length !== 8 || isNaN(cep)) {
+        cepError.style.display = 'block';
+        frete = 0;
+        atualizarTotal();
+        return;
+    } else {
+        cepError.style.display = 'none';
+    }
 
-            const peso = 0.3;
-            const altura = 4;
-            const largura = 12;
-            const comprimento = 17;
-            const cepOrigem = "14408014";
+    const cidadeOrigem = await verificarCidade(cepOrigem);
+    const cidadeDestino = await verificarCidade(cep);
 
-            try {
-                const response = await fetch('https://api-frete-xz1n.onrender.com/calcular-frete', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        cepDestino: cep,
-                        cepOrigem: cepOrigem,
-                        peso: peso,
-                        altura: altura,
-                        largura: largura,
-                        comprimento: comprimento,
-                    }),
-                });
+    if (cidadeOrigem && cidadeDestino && cidadeOrigem === cidadeDestino) {
+        frete = 0; // Ou um valor fixo para entregas locais
+        document.getElementById('frete').textContent = `$${frete.toFixed(2)}`;
+        atualizarTotal();
+        return;
+    }
 
-                if (!response.ok) {
-                    throw new Error('Erro ao calcular frete');
-                }
+    loadingSpinner.style.display = 'block'; // Mostra o spinner de carregamento
 
-                const data = await response.json();
+    const peso = 0.3;
+    const altura = 4;
+    const largura = 12;
+    const comprimento = 17;
 
-                if (data && data.length > 0 && !isNaN(parseFloat(data[0].price))) {
-                    const precoFormatado = data[0].price.replace('R$', '').replace(',', '.').trim();
-                    frete = parseFloat(precoFormatado);
-                } else {
-                    frete = 0;
-                    alert('Não foi possível calcular o frete. Tente novamente mais tarde.');
-                }
-            } catch (error) {
-                console.error('Erro ao calcular frete:', error);
-                frete = 0;
-                alert('Erro ao calcular o frete. Tente novamente mais tarde.');
-            } finally {
-                loadingSpinner.style.display = 'none'; // Esconde o spinner de carregamento
-            }
+    try {
+        const response = await fetch('https://api-frete-xz1n.onrender.com/calcular-frete', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                cepDestino: cep,
+                cepOrigem: cepOrigem,
+                peso: peso,
+                altura: altura,
+                largura: largura,
+                comprimento: comprimento,
+            }),
+        });
 
-            document.getElementById('frete').textContent = `$${frete.toFixed(2)}`;
-            atualizarTotal();
+        if (!response.ok) {
+            throw new Error('Erro ao calcular frete');
         }
+
+        const data = await response.json();
+
+        if (data && data.length > 0 && !isNaN(parseFloat(data[0].price))) {
+            const precoFormatado = data[0].price.replace('R$', '').replace(',', '.').trim();
+            frete = parseFloat(precoFormatado);
+        } else {
+            frete = 0;
+            alert('Não foi possível calcular o frete. Tente novamente mais tarde.');
+        }
+    } catch (error) {
+        console.error('Erro ao calcular frete:', error);
+        frete = 0;
+        alert('Erro ao calcular o frete. Tente novamente mais tarde.');
+    } finally {
+        loadingSpinner.style.display = 'none'; // Esconde o spinner de carregamento
+    }
+
+    document.getElementById('frete').textContent = `$${frete.toFixed(2)}`;
+    atualizarTotal();
+}
 
         exibirCarrinho();
     </script>
