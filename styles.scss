@@ -270,14 +270,24 @@ aside > button:hover {
   max-width: 150px;
 }
 
-#cep-error {
-    display: none; /* Inicialmente oculto */
-    color: red;
-    margin-top: 5px; /* Espaço entre o input e a mensagem */
-    font-size: 14px;
-    font-weight: bold;
+.frete-input {
+    display: flex;
+    flex-direction: column;
+    gap: 5px; /* Espaço entre os elementos */
 }
 
+.error-message {
+    display: none; /* Inicialmente oculto */
+    color: red;
+    font-size: 14px;
+    margin-top: 5px; /* Espaço entre o input e a mensagem */
+}
+
+.loading-spinner {
+    display: none; /* Inicialmente oculto */
+    font-size: 14px;
+    margin-top: 5px; /* Espaço entre o input e o spinner */
+}
 
 /* Estilo do ícone de hambúrguer */
 .menu-icon {
