@@ -271,10 +271,11 @@ aside > button:hover {
 }
 
 #cep-error {
-  color: red;
-  font-size: 12px;
-  margin-top: 5px;
-  display: none;
+    display: none; /* Inicialmente oculto */
+    color: red;
+    margin-top: 5px; /* Espaço entre o input e a mensagem */
+    font-size: 14px;
+    font-weight: bold;
 }
 
 
