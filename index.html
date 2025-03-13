@@ -161,6 +161,7 @@
         }
 
         // Declara a variável frete no escopo global
+
 async function calcularFrete() {
     const cep = document.getElementById('cep').value;
 
@@ -217,6 +218,13 @@ async function calcularFrete() {
 
     document.getElementById('frete').textContent = `$${frete.toFixed(2)}`;
     atualizarTotal();
+}
+
+function atualizarTotal() {
+    const subtotal = parseFloat(subtotalElement.textContent.replace('$', '')) || 0;
+    const freteValue = parseFloat(document.getElementById('frete').textContent.replace('$', '')) || 0;
+    const total = subtotal + freteValue;
+    totalElement.textContent = `$${total.toFixed(2)}`;
 }
 
         exibirCarrinho();
