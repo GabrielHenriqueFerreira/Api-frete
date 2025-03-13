@@ -58,11 +58,11 @@
                             <span>Frete</span>
                             <span id="frete">$ 0.00</span>
                         </div>
-                  <div class="frete-input">
+               <div class="frete-input">
     <span>CEP</span>
     <input type="text" id="cep" placeholder="Digite seu CEP" maxlength="8" oninput="calcularFrete()">
-    <div id="cep-error" style="display: none; color: red; margin-top: 5px;">CEP inválido ou não encontrado.</div>
-    <div id="loading-spinner" style="display: none;">
+    <div id="cep-error" class="error-message">CEP inválido ou não encontrado.</div>
+    <div id="loading-spinner" class="loading-spinner">
         <i class='bx bx-loader-circle bx-spin'></i> Calculando frete...
     </div>
 </div>
