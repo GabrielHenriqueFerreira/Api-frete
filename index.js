@@ -1,277 +1,73 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="shortcut icon" type="image/x-icon" href="icon.png">
-    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
-    <link rel="stylesheet" href="styles.css">
-    <script defer src="responsive.js"></script>
-    <title>Br Tools</title>
-</head>
-<body>
-    <header>
-        <a href="/home/gabriel/Downloads/site igor/index.html">
-            <img src="logo.png" width="100px" height="100px" alt="Logo Br Tools">
-        </a>
-        <!-- Ícone de hambúrguer para telas menores -->
-        <div class="menu-icon" id="menu-icon">
-            <i class='bx bx-menu'></i> <!-- Ícone de hambúrguer do Boxicons -->
-        </div>
-        <!-- Menu de navegação -->
-        <nav class="navbar" id="navbar">
-            <ul>
-                <li><a href="/home/gabriel/Downloads/site igor/index.html">Início</a></li>
-                <li><a href="/produtos">Produtos</a></li>
-                <li><a href="/sobre">Sobre Nós</a></li>
-                <li><a href="/contato">Contato</a></li>
-            </ul>
-        </nav>
-    </header>
+const express = require('express');
+const axios = require('axios');
+const cors = require('cors');
 
-    <main>
-        <div class="page-title">Seu Carrinho</div>
-        <div class="content">
-            <section>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Produto</th>
-                            <th>Preço</th>
-                            <th>Quantidade</th>
-                            <th>Total</th>
-                            <th>-</th>
-                        </tr>
-                    </thead>
-                    <tbody id="carrinho-itens">
-                        <!-- Itens do carrinho serão adicionados aqui dinamicamente -->
-                    </tbody>
-                </table>
-                <div id="empty-cart-message" style="display: none;"></div>
-            </section>
-            <aside>
-                <div class="box">
-                    <header>Resumo da compra</header>
-                    <div class="info">
-                        <div><span>Sub-total</span><span id="subtotal">$ 0.00</span></div>
-                        <div>
-                            <span>Frete</span>
-                            <span id="frete">$ 0.00</span>
-                        </div>
-               <div class="frete-input">
-    <span>CEP</span>
-    <input type="text" id="cep" placeholder="Digite seu CEP" maxlength="8" oninput="calcularFrete()">
-    <div id="cep-error" class="error-message">CEP inválido ou não encontrado.</div>
-    <div id="loading-spinner" class="loading-spinner">
-        <i class='bx bx-loader-circle bx-spin'></i> Calculando frete...
-    </div>
-</div>
-                    </div>
-                    <footer>
-                        <span>Total</span>
-                        <span id="total">$ 0.00</span>
-                    </footer>
-                </div>
-                <button>Finalizar compra</button>
-            </aside>
-        </div>
-    </main>
+const app = express();
+const port = process.env.PORT || 3220;
 
-    <script>
-        let carrinho = JSON.parse(localStorage.getItem('carrinho')) || [];
-        const carrinhoItens = document.getElementById('carrinho-itens');
-        const subtotalElement = document.getElementById('subtotal');
-        const totalElement = document.getElementById('total');
-        const emptyCartMessage = document.getElementById('empty-cart-message');
-        const cepError = document.getElementById('cep-error');
-        const loadingSpinner = document.getElementById('loading-spinner');
-        let frete = 0;
+const API_KEY = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIxIiwianRpIjoiZTMwMDM5NzVlZTk3Y2Y0YmYwMjRiNzVkMGMxN2Q1NjdkOGU5NzBjZjFkZjMzNDA2MTA2MTAzNDNiYjk5OWE0MGExNTljOWJiNTJlZjE5NTQiLCJpYXQiOjE3NDEyNjUyMjkuMDY1NDA4LCJuYmYiOjE3NDEyNjUyMjkuMDY1NDEsImV4cCI6MTc3MjgwMTIyOS4wMjQxNDQsInN1YiI6IjllNTNmZTlmLWMxM2QtNDNkYy1hYjc0LWRiNjZjOTIyY2MwNyIsInNjb3BlcyI6WyJzaGlwcGluZy1jYWxjdWxhdGUiXX0.E3tDiYWJt4PRoVRlfz7c08upQECvWDCOSsgSo-HKnwP0pBJ9EgQHksV3rpRnybKJX3iAci-En2Cx0wjC6nFnl75LwOQ4NoMoemB2a2zR4ODGye8zVFCrln7dG1N7ETJVI3mlMHPRCyyHFClbFk1TcXGIuFSYLhgE2j1x_9dtzdOT-8SbkNEET2--HG08-ElkL2KFOAjONe7yNNPBTn2UNYeZjcT0ceTJATfA4EAEq0EJIRzdWXqh0Tjwg2yEsIcEBvAaVxCFllSn6_aWPcSOC4r9zxrrhYwKPElVC7ZBBRgyvZWmceOQ0EXZFL3Dv5BDLza-asNKzIUaTW9tR1tnvZMyQ3deId91eC9QhfL2yt28rABT0hHqSkCNXis0vDTFd4iMzATzVy0c1pAq2s2iUipiwosceLwlh82_ul8Gi0RoImrXvdImud_MhYcefRU5XFDil5Uvb_N2VNfW_nW5tEw8Y-sItsG5_Ab5aEoFbReN2MYIrx0iLF--Td4Q_vWgBZPGgRFIQ2WUpqpPBJfzYAlrauEcs-d4wrDYtKC0BqE1su0GKU4APFDebBZD-358UiET8ppIHyEifE-G_T7eQvD2SC0k2M02ra9ysZM2etstOFNJ_CeNrcw2-Giusl5x8kWqFGUt-LR9jNIcsZLF2ns-RivapOAD_0edlR2kbVc'; // Substitua pela sua chave API do Melhor Envio
 
-        function exibirCarrinho() {
-            let subtotal = 0;
-            carrinhoItens.innerHTML = '';
+// Configuração do CORS para permitir requisições do GitHub Pages
+const corsOptions = {
+    origin: 'https://gabrielhenriqueferreira.github.io', // Permite apenas requisições deste domínio
+    methods: 'POST', // Permite apenas o método POST
+    optionsSuccessStatus: 200 // Para navegadores mais antigos
+};
 
-            if (carrinho.length === 0) {
-                emptyCartMessage.style.display = 'block';
-                subtotalElement.textContent = '$ 0.00';
-                totalElement.textContent = '$ 0.00';
-                return;
-            } else {
-                emptyCartMessage.style.display = 'none';
-            }
+app.use(cors(corsOptions)); // Aplica as configurações do CORS
+app.use(express.json());
 
-            carrinho.forEach((produto, index) => {
-                if (!produto.quantidade || isNaN(produto.quantidade)) {
-                    produto.quantidade = 1;
-                }
+app.post('/calcular-frete', async (req, res) => {
+    const { cepDestino, cepOrigem, peso, altura, largura, comprimento } = req.body;
 
-                const totalProduto = produto.preco * produto.quantidade;
-                subtotal += totalProduto;
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        <div class="product">
-                            <img src="${produto.imagem}" alt="${produto.nome}" width="100" height="120">
-                            <div class="info">
-                                <div class="name">${produto.nome}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>$${produto.preco.toFixed(2)}</td>
-                    <td>
-                        <div class="qty">
-                            <button onclick="diminuirQuantidade(${index})"><i class='bx bx-minus'></i></button>
-                            <span>${produto.quantidade}</span>
-                            <button onclick="aumentarQuantidade(${index})"><i class='bx bx-plus'></i></button>
-                        </div>
-                    </td>
-                    <td>$${totalProduto.toFixed(2)}</td>
-                    <td>
-                        <button class="remove" onclick="removerItem(${index})"><i class='bx bx-x'></i></button>
-                    </td>
-                `;
-                carrinhoItens.appendChild(row);
-            });
-
-            subtotalElement.textContent = `$${subtotal.toFixed(2)}`;
-            atualizarTotal();
-        }
-
-        function atualizarTotal() {
-            const subtotal = parseFloat(subtotalElement.textContent.replace('$', ''));
-            const total = subtotal + frete;
-            totalElement.textContent = `$${total.toFixed(2)}`;
-        }
-
-        function aumentarQuantidade(index) {
-            carrinho[index].quantidade += 1;
-            localStorage.setItem('carrinho', JSON.stringify(carrinho));
-            exibirCarrinho();
-        }
-
-        function diminuirQuantidade(index) {
-            if (carrinho[index].quantidade > 1) {
-                carrinho[index].quantidade -= 1;
-                localStorage.setItem('carrinho', JSON.stringify(carrinho));
-                exibirCarrinho();
-            }
-        }
-
-        function removerItem(index) {
-            carrinho.splice(index, 1);
-            localStorage.setItem('carrinho', JSON.stringify(carrinho));
-            exibirCarrinho();
-        }
-
-       async function verificarCidade(cep) {
-    try {
-        const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`);
-        const data = await response.json();
-        return data.localidade; // Retorna a cidade do CEP
-    } catch (error) {
-        console.error('Erro ao consultar CEP:', error);
-        return null;
-    }
-}
-
-async function calcularFrete() {
-    const cep = document.getElementById('cep').value;
-    const cepOrigem = "14408014"; // CEP da empresa
-
-    if (!cep || cep.length !== 8 || isNaN(cep)) {
-        cepError.style.display = 'block';
-        frete = 0;
-        atualizarTotal();
-        return;
-    } else {
-        cepError.style.display = 'none';
-    }
-
-    const cidadeOrigem = await verificarCidade(cepOrigem);
-    const cidadeDestino = await verificarCidade(cep);
-
-    if (cidadeOrigem && cidadeDestino && cidadeOrigem === cidadeDestino) {
-        frete = 0; // Frete grátis para a mesma cidade
-        document.getElementById('frete').textContent = 'Gratuito'; // Exibe "Gratuito"
-        atualizarTotal();
-        return;
-    }
-
-    loadingSpinner.style.display = 'block'; // Mostra o spinner de carregamento
-
-    const peso = 0.3;
-    const altura = 4;
-    const largura = 12;
-    const comprimento = 17;
+    console.log('Dados recebidos:', {
+        cepDestino,
+        cepOrigem,
+        peso,
+        altura,
+        largura,
+        comprimento,
+    });
 
     try {
-        const response = await fetch('https://api-frete-xz1n.onrender.com/calcular-frete', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+        const response = await axios.post(
+            'https://www.melhorenvio.com.br/api/v2/me/shipment/calculate',
+            {
+                from: { postal_code: cepOrigem },
+                to: { postal_code: cepDestino },
+                package: {
+                    weight: peso,
+                    height: altura,
+                    width: largura,
+                    length: comprimento,
+                },
+                options: {
+                    insurance_value: 0,
+                    receipt: false,
+                    own_hand: false,
+                },
             },
-            body: JSON.stringify({
-                cepDestino: cep,
-                cepOrigem: cepOrigem,
-                peso: peso,
-                altura: altura,
-                largura: largura,
-                comprimento: comprimento,
-            }),
-        });
+            {
+                headers: {
+                    'Authorization': `Bearer ${API_KEY}`,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'User-Agent': 'Aplicação (gabriel06henrique06@gmail.com)',
+                },
+            }
+        );
 
-        if (!response.ok) {
-            throw new Error('Erro ao calcular frete');
-        }
-
-        const data = await response.json();
-
-        if (data && data.error && data.error.includes("mesma cidade")) {
-            frete = 0; // Frete grátis para a mesma cidade
-            document.getElementById('frete').textContent = 'Gratuito'; // Exibe "Gratuito"
-        } else if (data && data.length > 0 && !isNaN(parseFloat(data[0].price))) {
-            const precoFormatado = data[0].price.replace('R$', '').replace(',', '.').trim();
-            frete = parseFloat(precoFormatado);
-            document.getElementById('frete').textContent = `$${frete.toFixed(2)}`; // Exibe o valor do frete
-        } else {
-            frete = 0;
-            alert('Não foi possível calcular o frete. Tente novamente mais tarde.');
-        }
+        console.log('Resposta da API do Melhor Envio:', response.data);
+        res.json(response.data); // Retorna a resposta da API do Melhor Envio
     } catch (error) {
-        console.error('Erro ao calcular frete:', error);
-        frete = 0;
-        alert('Erro ao calcular o frete. Tente novamente mais tarde.');
-    } finally {
-        loadingSpinner.style.display = 'none'; // Esconde o spinner de carregamento
+        console.error('Erro ao calcular frete:', error.response ? error.response.data : error.message);
+        res.status(500).json({ error: 'Erro ao calcular frete', details: error.response ? error.response.data : error.message });
     }
+});
 
-    atualizarTotal();
-}
+const server = app.listen(port, () => {
+    console.log(`Servidor rodando em http://localhost:${port}`);
+});
 
-        exibirCarrinho();
-    </script>
-
-    <footer class="site-footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>Sobre Nós</h3>
-                <p>Br Tools é uma loja especializada em ferramentas de alta qualidade para profissionais e entusiastas.</p>
-            </div>
-            <div class="footer-section">
-                <h3>Contatos</h3>
-                <p> Pix: 42.721.573/0001-54</p>
-                <br>
-                <p>CNPJ: 42.721.573/0001-54</p>
-                <br>
-                <p>E-mail: josejunior71@gmail.com</p>
-                <br>
-                <p>Número de contato: +55 (16) 99192-8412</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Br Tools. Todos os direitos reservados.</p>
-        </div>
-    </footer>
-</body>
-</html>
+// Aumenta o limite de ouvintes de eventos, se necessário
+server.setMaxListeners(20);
